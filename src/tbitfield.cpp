@@ -89,56 +89,46 @@ TBitField& TBitField::operator=(const TBitField &bf) // присваивание
 
 int TBitField::operator==(const TBitField &bf) const // сравнение
 {
-    if (MemLen != bf.MemLen) return 0;
-    for (int i = 0; i < MemLen; i++)
-        if (pMem[i] != bf.pMem[i])
-            return 0;
-    return 1;
+    return !(*this != bf);
+
 }
 
 int TBitField::operator!=(const TBitField &bf) const // сравнение
 {
-  return !(*this == bf);
+    int len = MemLen > bf.MemLen ? MemLen : bf.MemLen;
+    return bool(memcmp(pMem, bf.pMem, len * sizeof(TELEM)));
 }
 
 TBitField TBitField::operator|(const TBitField &bf) // операция "или"
 {
-    if (BitLen >= bf.BitLen) {
-        TBitField tb(*this);
-        for (int i = 0; i < bf.MemLen; i++)
-            tb.pMem[i]|= bf.pMem[i];
-        return tb;
-    }
-    else {
-        TBitField tb(bf);
-        for (int i = 0; i < MemLen; i++)
-            tb.pMem[i] |= pMem[i];
-        return tb;
-    }
+    int len = BitLen > bf.BitLen ? BitLen : bf.BitLen;
+    TBitField tb(len);
+    int i = 0;
+    for (; i < MemLen && i < bf.MemLen; i++)
+        tb.pMem[i] = pMem[i] | bf.pMem[i];
+    for (; i < MemLen; i++)
+        tb.pMem[i] = pMem[i];
+    for (; i < bf.MemLen; i++)
+        tb.pMem[i] = bf.pMem[i];
+    return tb;
 }
 
 TBitField TBitField::operator&(const TBitField &bf) // операция "и"
 {
-    if (BitLen >= bf.BitLen) {
-        TBitField tb(*this);
-        for (int i = 0; i < bf.MemLen; i++)
-            tb.pMem[i] &= bf.pMem[i];
-        return tb;
-    }
-    else {
-        TBitField tb(bf);
-        for (int i = 0; i < MemLen; i++)
-            tb.pMem[i] &= pMem[i];
-        return tb;
-    }
+    int len = BitLen > bf.BitLen ? BitLen : bf.BitLen;
+    TBitField tb(len);
+    int i = 0;
+    for (; i < MemLen && i < bf.MemLen; i++)
+        tb.pMem[i] = pMem[i] & bf.pMem[i];
+    return tb;
 }
 
 TBitField TBitField::operator~(void) // отрицание
 {
-    TBitField tb(*this);
+    TBitField tb(BitLen);
     for (int i = 0; i < MemLen - 1; i++)
-        tb.pMem[i] = ~tb.pMem[i];
-    tb.pMem[MemLen - 1] = (~tb.pMem[MemLen - 1]) & ((1 << (BitLen & ((1 << shift) - 1))) - 1);
+        tb.pMem[i] = ~pMem[i];
+    tb.pMem[MemLen - 1] = (~pMem[MemLen - 1]) & ((1 << (BitLen & ((1 << shift) - 1))) - 1);
     return tb;
 }
 
