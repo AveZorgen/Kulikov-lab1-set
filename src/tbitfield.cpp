@@ -119,7 +119,7 @@ TBitField TBitField::operator|(const TBitField &bf) // операция "или"
 
 TBitField TBitField::operator&(const TBitField &bf) // операция "и"
 {
-    if (BitLen >= bf.BitLen) { //1101 & 110 = 1100, а должно 0100 
+    if (BitLen >= bf.BitLen) {
         TBitField tb(*this);
         for (int i = 0; i < bf.MemLen; i++)
             tb.pMem[i] &= bf.pMem[i];
