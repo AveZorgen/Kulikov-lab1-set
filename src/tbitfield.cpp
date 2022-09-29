@@ -128,7 +128,9 @@ TBitField TBitField::operator~(void) // отрицание
     TBitField tb(BitLen);
     for (int i = 0; i < MemLen - 1; i++)
         tb.pMem[i] = ~pMem[i];
-    tb.pMem[MemLen - 1] = (~pMem[MemLen - 1]) & ((1 << (BitLen & ((1 << shift) - 1))) - 1);
+    int dvig = BitLen & ((1 << shift) - 1);
+    tb.pMem[MemLen - 1] = (~pMem[MemLen - 1]) & ((1 << dvig) - 1);
+    //tb.pMem[MemLen - 1] = ~(pMem[MemLen - 1] | (TELEM(-1) << dvig));
     return tb;
 }
 
