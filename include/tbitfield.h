@@ -13,6 +13,7 @@
 using namespace std;
 
 typedef unsigned int TELEM;
+static const int shift = 5;
 
 class TBitField
 {
